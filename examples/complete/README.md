@@ -1,5 +1,5 @@
 <!-- BEGIN_TF_DOCS -->
-# Fibre-Channel Pool Example
+# SSH Policy Example
 
 To run this example you need to execute:
 
@@ -13,23 +13,30 @@ Note that this example will create resources. Resources can be destroyed with `t
 
 ### main.tf
 ```hcl
-module "wwpn_pool" {
-  source  = "scotttyso/pools-fc/intersight"
+module "ssh" {
+  source  = "terraform-cisco-modules/policies-ssh/intersight"
   version = ">= 1.0.1"
 
-  assignment_order = "sequential"
-  description      = "Demo WWPN Pool"
-  id_blocks = [
-    {
-      from = "0:00:00:25:B5:00:00:00"
-      size = 1000
-    }
-  ]
+  description  = "default SSH Policy."
+  enable_ssh   = true
   name         = "default"
   organization = "default"
-  pool_purpose = "WWPN"
+  ssh_port     = 22
+  ssh_timeout  = 1800
 }
+```
 
+### provider.tf
+```hcl
+terraform {
+  required_providers {
+    intersight = {
+      source  = "CiscoDevNet/intersight"
+      version = ">=1.0.32"
+    }
+  }
+  required_version = ">=1.3.0"
+}
 ```
 
 ### variables.tf
@@ -50,24 +57,6 @@ variable "secretkey" {
   description = "Intersight Secret Key."
   sensitive   = true
   type        = string
-}
-```
-
-### versions.tf
-```hcl
-terraform {
-  required_providers {
-    intersight = {
-      source  = "CiscoDevNet/intersight"
-      version = ">=1.0.32"
-    }
-  }
-}
-
-provider "intersight" {
-  apikey    = var.apikey
-  endpoint  = var.endpoint
-  secretkey = var.secretkey
 }
 ```
 <!-- END_TF_DOCS -->
